@@ -15,22 +15,23 @@ type Status = {
 type Aluno = {
   id?: number;
   nome: string;
-  // Removido turma e matricula daqui também
   dataNascimento?: string;
-  periodo?: string;
-  ano?: string;
-  horario?: string;
-  professora?: string;
-  auxiliar?: string;
   responsavelPedagogico?: string;
   parentesco?: string;
   emailResponsavel?: string;
   telefone1?: string;
   telefone2?: string;
   status?: Status;
-  // Adicionei apenas para exibição — virá do backend via DTO
+  dataCriacao?: string;
+  // Campos vindos da turma
   turma?: string;
   matricula?: string;
+  professora?: string;
+  auxiliar?: string;
+  horarioInicio?: string;
+  horarioFim?: string;
+  periodo?: string;
+  ano?: string;
 };
 
 export default function AlunosPage() {
@@ -399,7 +400,8 @@ export default function AlunosPage() {
                         { key: "turma", label: "Turma" },
                         { key: "periodo", label: "Período" },
                         { key: "ano", label: "Ano" },
-                        { key: "horario", label: "Horário" },
+                        { key: "horarioInicio", label: "Horário Início" },
+                        { key: "horarioFim", label: "Horário Fim" },
                         { key: "professora", label: "Professora" },
                         { key: "auxiliar", label: "Auxiliar" },
                       ] as { key: keyof Aluno; label: string }[]
