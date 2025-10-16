@@ -15,8 +15,7 @@ type Status = {
 type Aluno = {
   id?: number;
   nome: string;
-  turma: string;
-  matricula?: string;
+  // Removido turma e matricula daqui também
   dataNascimento?: string;
   periodo?: string;
   ano?: string;
@@ -29,6 +28,9 @@ type Aluno = {
   telefone1?: string;
   telefone2?: string;
   status?: Status;
+  // Adicionei apenas para exibição — virá do backend via DTO
+  turma?: string;
+  matricula?: string;
 };
 
 export default function AlunosPage() {
@@ -76,8 +78,6 @@ export default function AlunosPage() {
     } else {
       setAlunoSelecionado({
         nome: "",
-        turma: "",
-        matricula: "",
       });
       setModoEdicao(true);
     }
@@ -88,6 +88,9 @@ export default function AlunosPage() {
     if (!alunoSelecionado) return;
 
     const alunoParaSalvar = { ...alunoSelecionado };
+
+    delete alunoParaSalvar.turma;
+    delete alunoParaSalvar.matricula;
 
     if (alunoParaSalvar.dataNascimento?.includes("/")) {
       const [dia, mes, ano] = alunoParaSalvar.dataNascimento.split("/");
@@ -129,9 +132,12 @@ export default function AlunosPage() {
       setTimeout(() => setMensagem(null), 4000);
     } catch (err) {
       console.error(err);
+      setMensagem("❌ Erro ao salvar aluno");
+      setTimeout(() => setMensagem(null), 4000);
     }
   };
 
+  // Filtros continuam funcionando (turma e matrícula só para exibir)
   const alunosFiltrados = alunos.filter((a) => {
     const nome = a.nome?.toLowerCase() || "";
     const turma = a.turma?.toLowerCase() || "";
