@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 const isLocal =
     typeof window !== "undefined" && window.location.hostname === "localhost";
 const API_BASE_URL = isLocal ? "http://localhost:8080" : "";
-
 type Turma = {
     id?: number;
     nome: string;
@@ -14,8 +13,13 @@ type Turma = {
     situacao?: string;
     turno?: string;
     maximoAlunos?: number;
-    inicio?: string;   // dd/MM/aaaa no front
-    termino?: string;  // dd/MM/aaaa no front
+    inicio?: string;
+    termino?: string;
+    horarioInicio?: string;
+    horarioFim?: string;
+    ano?: string;
+    professora?: string;
+    auxiliar?: string;
 };
 
 export default function TurmasPage() {
@@ -58,6 +62,17 @@ export default function TurmasPage() {
             value = `${value.slice(0, 2)}/${value.slice(2, 4)}/${value.slice(4)}`;
         else if (value.length >= 3)
             value = `${value.slice(0, 2)}/${value.slice(2)}`;
+        return value;
+    };
+
+    // Máscara hh:mm
+    const handleHourMask = (v: string) => {
+        let value = v.replace(/\D/g, ""); // remove tudo que não é número
+        if (value.length > 4) value = value.slice(0, 4);
+
+        if (value.length >= 3) {
+            value = `${value.slice(0, 2)}:${value.slice(2)}`;
+        }
         return value;
     };
 
@@ -129,6 +144,11 @@ export default function TurmasPage() {
             maximoAlunos?: number | null;
             inicio?: string | null;
             termino?: string | null;
+            horarioInicio?: string | null;
+            horarioFim?: string | null;
+            ano?: string | null;
+            professora?: string | null;
+            auxiliar?: string | null;
         };
 
         const payload: TurmaPayload = {
@@ -147,6 +167,12 @@ export default function TurmasPage() {
                     : Number(turmaSelecionada.maximoAlunos),
             inicio: normStr(turmaSelecionada.inicio),
             termino: normStr(turmaSelecionada.termino),
+
+            horarioInicio: normStr(turmaSelecionada.horarioInicio),
+            horarioFim: normStr(turmaSelecionada.horarioFim),
+            ano: normStr(turmaSelecionada.ano),
+            professora: normStr(turmaSelecionada.professora),
+            auxiliar: normStr(turmaSelecionada.auxiliar),
         };
 
         const metodo = turmaSelecionada.id ? "PUT" : "POST";
@@ -349,6 +375,12 @@ export default function TurmasPage() {
                                     { label: "Máximo de alunos", key: "maximoAlunos" as const, type: "number" as const },
                                     { label: "Início", key: "inicio" as const, type: "datebr" as const },
                                     { label: "Término", key: "termino" as const, type: "datebr" as const },
+                                    { label: "Horário Início", key: "horarioInicio" as const, type: "text" as const },
+                                    { label: "Horário Fim", key: "horarioFim" as const, type: "text" as const },
+                                    { label: "Ano", key: "ano" as const, type: "text" as const },
+                                    { label: "Professora", key: "professora" as const, type: "text" as const },
+                                    { label: "Auxiliar", key: "auxiliar" as const, type: "text" as const },
+
                                 ]
                             ).map(({ label, key, type }) => {
                                 const current = turmaSelecionada[key];
@@ -409,6 +441,8 @@ export default function TurmasPage() {
                                                             e.target.value === "" ? undefined : Number(e.target.value);
                                                     } else if (type === "datebr") {
                                                         newValue = handleDateMask(e.target.value);
+                                                    } else if (key === "horarioInicio" || key === "horarioFim") {
+                                                        newValue = handleHourMask(e.target.value);
                                                     }
 
                                                     const updated = { ...turmaSelecionada, [key]: newValue } as Turma;
